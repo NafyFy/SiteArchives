@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S Y S T E M _ M I N D _ XP</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="scanlines"></div>
+    <div class="noise-overlay"></div>
+
+    <div id="desktop">
+        
+        <div class="desktop-icons">
+            <div class="icon" onclick="openWindow('win-readme')">
+                <img src="https://win98icons.alexmeub.com/icons/png/help_book_big-0.png" alt="Readme">
+                <span>README_RECUP.txt</span>
+            </div>
+
+            <div class="icon" onclick="openWindow('win-family')">
+                <img src="https://win98icons.alexmeub.com/icons/png/directory_closed-4.png" alt="Photos">
+                <span>Photos_Vie</span>
+            </div>
+
+            <div class="icon" onclick="openWindow('win-browser')">
+                <img src="https://win98icons.alexmeub.com/icons/png/msie2-2.png" alt="IE">
+                <span>Internet_Explorer</span>
+            </div>
+
+            <div class="icon" onclick="openWindow('win-iut')">
+                <img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png" alt="Projets">
+                <span>Archives_Projets</span>
+            </div>
+
+            <div class="icon" onclick="openWindow('win-trash')">
+                <img src="https://win98icons.alexmeub.com/icons/png/recycle_bin_full-4.png" alt="Trash">
+                <span>Corbeille</span>
+            </div>
+
+            <div class="icon" id="icon-project" onclick="triggerGlitch()" style="display:none;">
+                <img src="https://win98icons.alexmeub.com/icons/png/gears-2.png" alt="Project">
+                <span>LE_PROJET.exe</span>
+            </div>
+        </div>
+
+        <div class="window" id="win-readme" style="top:50px; left:50px; display:block; width:350px;">
+            <div class="window-header">
+                <span>Bloc-notes - README_RECUP.txt</span>
+                <div class="window-controls">
+                    <button class="minimize-btn" onclick="minimizeWin(this)">_</button>
+                    <button class="close-btn" onclick="closeWin(this)">X</button>
+                </div>
+            </div>
+            <div class="window-content" id="readme-text" style="white-space: pre-wrap; font-size: 12px; line-height: 1.4; font-family: 'Courier New', monospace;">
+                </div>
+        </div>
+
+        <div class="window" id="win-browser" style="display:none; width:550px; height:400px; top:10%; left:20%;">
+            <div class="window-header">
+                <span>Microsoft Internet Explorer</span>
+                <div class="window-controls">
+                    <button class="minimize-btn" onclick="minimizeWin(this)">_</button>
+                    <button class="close-btn" onclick="closeWin(this)">X</button>
+                </div>
+            </div>
+            <div class="window-content" style="background: #fff; color: #000; height: 90%; overflow-y: scroll; padding:0;">
+                <div style="background: #eee; padding: 5px; border-bottom: 1px solid #ccc; font-size: 10px; color: #333;">
+                    Adresse : http://archives.laval-presse.fr/mai-2004/fait-divers
+                </div>
+                <div style="padding: 20px; font-family: 'Times New Roman', serif;">
+                    <h2 style="color: #000; border-bottom: 2px solid #000;">Disparition inquiétante au complexe Aeterna</h2>
+                    <p style="font-size: 14px;">Depuis le 12 mai 2004, les autorités sont sans nouvelles de l'ingénieur de maintenance du secteur B.</p>
+                    <p style="font-size: 14px;">La police a retrouvé son bureau intact, mais le terminal central tournait en boucle. Un détail intrigue les enquêteurs : le dernier log indique une activité à <strong>03:42</strong>, heure à laquelle tout le secteur était censé être hors tension.</p>
+                    <img src="https://picsum.photos/400/150?grayscale&sig=8" style="width:100%; margin-top:10px; filter: contrast(1.2);">
+                    <p style="font-size: 10px; color: #666; margin-top: 10px;">&copy; 2004 Laval Presse - Tous droits réservés.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="window" id="win-family" style="top:150px; left:300px; display:none; width: 350px;">
+            <div class="window-header">
+                <span>Aperçu - Archives_Vie</span>
+                <div class="window-controls">
+                    <button class="minimize-btn" onclick="minimizeWin(this)">_</button>
+                    <button class="close-btn" onclick="closeWin(this)">X</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <div id="photo-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <img src="https://picsum.photos/200/200?grayscale&sig=10" class="corruptible-photo" title="Maison - Été 2003">
+                    <img src="https://picsum.photos/200/200?grayscale&sig=11" class="corruptible-photo" title="Le bureau">
+                </div>
+                <p id="journal-text" style="font-size:11px; margin-top:10px; color:#555; font-style: italic;"></p>
+            </div>
+        </div>
+
+        <div class="window" id="win-iut" style="display:none; width:320px; top:200px; left:100px;">
+            <div class="window-header">
+                <span>Explorateur - Mes Projets</span>
+                <div class="window-controls">
+                    <button class="minimize-btn" onclick="minimizeWin(this)">_</button>
+                    <button class="close-btn" onclick="closeWin(this)">X</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <ul style="font-size: 12px; line-height: 1.8;">
+                    <li>📁 Backup_System_V1</li>
+                    <li>📄 Architecture_Echo.pdf</li>
+                    <li><span style="color:red; cursor:help" onclick="addLog('ERREUR: Accès refusé par le Sujet 07.')">🔒 S3_Conscience_Transfer.exe</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="window" id="win-trash" style="display:none; width:300px; top:40%; left:50%;">
+            <div class="window-header"><span>Corbeille</span><button class="close-btn" onclick="closeWin(this)">X</button></div>
+            <div class="window-content">
+                <p style="font-size: 11px;">Fichiers en attente de suppression :</p>
+                <ul style="font-size: 11px;">
+                    <li><a href="#" onclick="addLog('ERREUR : Archive verrouillée.')">haine_de_soi.tmp</a></li>
+                    <li><a href="#" onclick="openWindow('win-secret')">SECRET_A_LIRE.txt</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="window" id="win-secret" style="display:none; width:250px; top:10%; left:70%; background:#ffffcc;">
+            <div class="window-header" style="background:orange;"><span>AVERTISSEMENT</span><button class="close-btn" onclick="closeWin(this)">X</button></div>
+            <div class="window-content" style="color:black; font-size: 12px;">
+                <p>L'ingénieur n'est pas parti. Il est devenu le code. <br><br> Ne cherchez pas à le sauver, il cherche une nouvelle hôte pour ses données.</p>
+            </div>
+        </div>
+
+        <div class="window" id="win-student-card" style="display:none; width:300px; top:30%; left:35%;">
+            <div class="window-header"><span>ID_CARD_LEO.jpg</span><button class="close-btn" onclick="closeWin(this)">X</button></div>
+            <div class="window-content" style="text-align:center;">
+                <img src="https://picsum.photos/250/150?grayscale&blur=2" style="width:100%; filter:sepia(1) contrast(1.2);">
+                <p style="font-size:12px; font-weight:bold; color: #000;">LÉO [IDENTITÉ CORROMPUE]</p>
+                <p style="font-size:10px; color: #333;">Maintenance Secteur B - 2004</p>
+            </div>
+        </div>
+
+        <div id="zone-aleatoire"></div>
+    </div>
+
+    <div id="terminal">
+        <div class="terminal-header">SYSTEM_MIND_LOGS_V.04</div>
+        <div id="terminal-content">
+            </div>
+    </div>
+
+    <nav class="taskbar">
+        <button class="start-button" onclick="addLog('Système de menu Démarrer hors ligne.')">Démarrer</button>
+        
+        <div id="task-leo" class="task-item" onclick="restoreLeo()" style="display:none;">
+            MSN - Léo (1)
+        </div>
+
+        <div id="clock" style="margin-left:auto; color: white; padding-right: 15px; font-size: 12px; cursor: pointer;">
+            00:00
+        </div>
+    </nav>
+
+    <div id="bsod-screen" class="bsod">
+        <h1>A problem has been detected and Fragment-0 has been shut down.</h1>
+        <p>REASON: COGNITIVE_OVERFLOW_ERROR</p>
+        <p>The subject's consciousness is leaking into the main partition.</p>
+        <br>
+        <p>If this is the first time you've seen this error screen, restart your reality.</p>
+        <br>
+        <p>*** STOP: 0x00000ECHO (Fragment_Recovered_2004)</p>
+        <p style="margin-top: 50px; font-size: 14px;">Appuyez sur F5 pour réinitialiser la boucle.</p>
+    </div>
+
+    <div id="evil-clippy" style="display:none; position:fixed; bottom:60px; right:40px; width:100px; cursor:pointer; z-index:900;">
+        <img src="https://win98icons.alexmeub.com/icons/png/msagent-2.png" style="width:100%; filter: drop-shadow(2px 2px 0px #000);">
+        <div id="clippy-speech" style="background:#ffffcc; border:1px solid black; padding:5px; font-size:10px; position:absolute; top:-50px; left:-30px; width:130px; display:none; color:black;">
+            On dirait que vous essayez d'échapper à vos souvenirs. Je peux vous aider ?
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
