@@ -308,3 +308,60 @@ body.glitch-level-2 { animation: shake 0.2s infinite; }
     75% { transform: translate(-2px, -2px); }
     100% { transform: translate(2px, 2px); }
 }
+
+/*--- 9. Effet Lecteur de Photos --- */
+.photo-viewer-container {
+    background: #7b7b7b; /* Couleur de fond du lecteur original */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #808080;
+    margin: 2px;
+}
+
+.image-display {
+    width: 100%;
+    height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: white;
+}
+
+.image-display img {
+    max-width: 95%;
+    max-height: 95%;
+    object-fit: contain;
+    transition: opacity 0.15s ease, transform 0.3s ease;
+}
+
+.photo-toolbar {
+    width: 100%;
+    height: 40px;
+    background: linear-gradient(to bottom, #f0f0f0 0%, #dcdcdc 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border-top: 1px solid #808080;
+}
+
+.photo-toolbar button {
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.photo-toolbar button:hover {
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid #999;
+}
+
+.toolbar-separator {
+    width: 1px;
+    height: 24px;
+    background: #a0a0a0;
+}

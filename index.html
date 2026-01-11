@@ -79,22 +79,43 @@
             </div>
         </div>
 
-        <div class="window" id="win-family" style="top:150px; left:300px; display:none; width: 350px;">
-            <div class="window-header">
-                <span>Aperçu - Archives_Vie</span>
-                <div class="window-controls">
-                    <button class="minimize-btn" onclick="minimizeWin(this)">_</button>
-                    <button class="close-btn" onclick="closeWin(this)">X</button>
-                </div>
-            </div>
-            <div class="window-content">
-                <div id="photo-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                    <img src="https://picsum.photos/200/200?grayscale&sig=10" class="corruptible-photo" title="Maison - Été 2003">
-                    <img src="https://picsum.photos/200/200?grayscale&sig=11" class="corruptible-photo" title="Le bureau">
-                </div>
-                <p id="journal-text" style="font-size:11px; margin-top:10px; color:#555; font-style: italic;"></p>
-            </div>
+       <div class="window" id="win-family" style="top:100px; left:200px; display:none; width: 500px;">
+    <div class="window-header">
+        <span id="photo-title">Aperçu - image01.jpg</span>
+        <div class="window-controls">
+            <button class="minimize-btn" onclick="minimizeWin(this)">_</button>
+            <button class="close-btn" onclick="closeWin(this)">X</button>
         </div>
+    </div>
+    
+    <div class="photo-viewer-container">
+        <div class="image-display">
+            <img src="" id="main-photo" class="corruptible-photo">
+        </div>
+        
+        <div class="photo-toolbar">
+            <button onclick="changePhoto(-1)" title="Précédente">
+                <img src="https://win98icons.alexmeub.com/icons/png/scroll_left-0.png">
+            </button>
+            <button onclick="changePhoto(1)" title="Suivante">
+                <img src="https://win98icons.alexmeub.com/icons/png/scroll_right-0.png">
+            </button>
+            <div class="toolbar-separator"></div>
+            <button onclick="zoomPhoto()" title="Zoom">
+                <img src="https://win98icons.alexmeub.com/icons/png/magnifying_glass-0.png">
+            </button>
+            <button onclick="triggerGlitch()" title="Supprimer">
+                <img src="https://win98icons.alexmeub.com/icons/png/recycle_bin_empty-4.png">
+            </button>
+        </div>
+    </div>
+
+    <div class="window-content" style="border-top: none; min-height: auto; padding: 5px;">
+        <p id="photo-caption" style="font-size:11px; color:#555; text-align:center; margin:0; font-style:italic;">
+            Chargement...
+        </p>
+    </div>
+</div>
 
         <div class="window" id="win-iut" style="display:none; width:320px; top:200px; left:100px;">
             <div class="window-header">
@@ -114,7 +135,12 @@
         </div>
 
         <div class="window" id="win-trash" style="display:none; width:300px; top:40%; left:50%;">
-            <div class="window-header"><span>Corbeille</span><button class="close-btn" onclick="closeWin(this)">X</button></div>
+            <div class="window-header"><span>Corbeille</span>
+             <div class="window-controls">
+                    <button class="minimize-btn" onclick="minimizeWin(this)">_</button>
+                    <button class="close-btn" onclick="closeWin(this)">X</button>
+                </div>
+            </div>
             <div class="window-content">
                 <p style="font-size: 11px;">Fichiers en attente de suppression :</p>
                 <ul style="font-size: 11px;">

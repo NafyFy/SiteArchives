@@ -256,3 +256,54 @@ setTimeout(() => {
     }
     receiveCensoredMessage("Est-ce que tu peux m'entendre ? Il fait sombre dans l'entrepôt.");
 }, 60000);
+// --- CONFIGURATION DES PHOTOS ---
+const photoData = [
+    { url: "https://picsum.photos/id/10/800/600?grayscale", title: "vacances_2003.jpg", caption: "Il faisait si chaud ce jour-là." },
+    { url: "https://picsum.photos/id/101/800/600?grayscale", title: "bureau_maintenance.jpg", caption: "Mon espace de travail au Secteur B." },
+    { url: "https://picsum.photos/id/122/800/600?grayscale", title: "entrepôt_entrée.jpg", caption: "L'entrée du complexe Aeterna avant la fermeture." },
+    { url: "https://picsum.photos/id/237/800/600?grayscale&blur=5", title: "fragment_07.jpg", caption: "ERREUR : Image corrompue. Subject_07 detected." }
+];
+
+let currentPhotoIndex = 0;
+
+function updatePhotoUI() {
+    const photo = photoData[currentPhotoIndex];
+    const imgElement = document.getElementById('main-photo');
+    
+    // Effet de fondu/glitch au changement
+    imgElement.style.opacity = 0;
+    
+    setTimeout(() => {
+        imgElement.src = photo.url;
+        document.getElementById('photo-title').innerText = "Aperçu - " + photo.title;
+        document.getElementById('photo-caption').innerText = photo.caption;
+        imgElement.style.opacity = 1;
+        
+        // Si glitchLevel est haut, on déforme l'image
+        if(glitchLevel >= 2) {
+            imgElement.style.filter = `hue-rotate(${Math.random()*360}deg) invert(1)`;
+        }
+    }, 150);
+}
+
+function changePhoto(direction) {
+    currentPhotoIndex += direction;
+    if (currentPhotoIndex >= photoData.length) currentPhotoIndex = 0;
+    if (currentPhotoIndex < 0) currentPhotoIndex = photoData.length - 1;
+    
+    updatePhotoUI();
+    addLog("Accès fichier : " + photoData[currentPhotoIndex].title);
+}
+
+function zoomPhoto() {
+    const img = document.getElementById('main-photo');
+    img.style.transform = img.style.transform === "scale(1.5)" ? "scale(1)" : "scale(1.5)";
+    addLog("Zoom numérique... Analyse des pixels en cours.");
+}
+
+// On surcharge la fonction d'ouverture globale pour inclure les photos
+const baseOpenWindow = openWindow;
+openWindow = function(id) {
+    baseOpenWindow(id);
+    if(id === 'win-family') updatePhotoUI();
+};
