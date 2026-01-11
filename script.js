@@ -307,3 +307,14 @@ openWindow = function(id) {
     baseOpenWindow(id);
     if(id === 'win-family') updatePhotoUI();
 };
+
+function openEncryptedFolder() {
+    let code = prompt("ENTREZ LA CLÉ DE DÉCRYPTAGE (HHMM) :");
+    if (code === "0342") { // L'heure de la disparition
+        openWindow('win-secret-files');
+        addLog("DÉCRYPTAGE RÉUSSI. BIENVENUE, INGÉNIEUR.");
+    } else {
+        addLog("ERREUR : CLÉ INCORRECTE. LE NOYAU VOUS OBSERVE.");
+        triggerGlitch();
+    }
+}
