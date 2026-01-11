@@ -1,4 +1,7 @@
-/* --- 1. VARIABLES & BASE --- */
+/* ============================================
+   1. VARIABLES & BASE
+   ============================================ */
+
 :root {
     --xp-blue: #0053e1;
     --xp-blue-dark: #0030ad;
@@ -9,9 +12,8 @@
 }
 
 body {
-    background: url('assets/WindowsXPWallpaper.jpg');
+    background: url('assets/WindowsXPWallpaper.jpg') no-repeat center center fixed;
     background-size: cover;
-    background-attachment: fixed;
     margin: 0;
     padding: 0;
     font-family: "Tahoma", "Segoe UI", sans-serif;
@@ -22,11 +24,20 @@ body {
     transition: filter 0.5s ease;
 }
 
+* {
+    box-sizing: border-box;
+}
 
-/* --- 2. COUCHES D'AMBIANCE (LOST MEDIA / URBEX) --- */
+/* ============================================
+   2. COUCHES D'AMBIANCE (LOST MEDIA / URBEX)
+   ============================================ */
+
 .scanlines {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%),
                 linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
     background-size: 100% 3px, 3px 100%;
@@ -36,7 +47,10 @@ body {
 
 .noise-overlay {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-image: url('https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Noisy_Texture.png');
     opacity: 0.04;
     z-index: 9998;
@@ -45,12 +59,15 @@ body {
 }
 
 @keyframes noise-anim {
-    0% { transform: translate(0,0) }
-    50% { transform: translate(-1%, 1%) }
-    100% { transform: translate(1%, -1%) }
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(-1%, 1%); }
+    100% { transform: translate(1%, -1%); }
 }
 
-/* --- 3. BUREAU & ICÔNES --- */
+/* ============================================
+   3. BUREAU & ICÔNES
+   ============================================ */
+
 #desktop {
     width: 100%;
     height: calc(100vh - 30px);
@@ -76,11 +93,15 @@ body {
     transition: transform 0.1s;
 }
 
+.icon:active {
+    transform: scale(0.95);
+}
+
 .icon img {
     width: 32px;
     height: 32px;
     margin-bottom: 5px;
-    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5));
+    filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5));
 }
 
 .icon span {
@@ -96,7 +117,10 @@ body {
     background: var(--xp-blue);
 }
 
-/* --- 4. FENÊTRES XP (LUNA STYLE) --- */
+/* ============================================
+   4. FENÊTRES XP (LUNA STYLE)
+   ============================================ */
+
 .window {
     position: absolute;
     min-width: 250px;
@@ -104,7 +128,7 @@ body {
     border: 3px solid var(--xp-blue);
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
-    box-shadow: 5px 5px 15px rgba(0,0,0,0.4);
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
     z-index: 50;
     display: flex;
     flex-direction: column;
@@ -130,7 +154,8 @@ body {
 }
 
 .window-controls button {
-    width: 21px; height: 21px;
+    width: 21px;
+    height: 21px;
     border: 1px solid white;
     border-radius: 3px;
     cursor: pointer;
@@ -139,10 +164,20 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 10px;
 }
 
-.minimize-btn { background: var(--xp-blue); }
-.close-btn { background: linear-gradient(to bottom, #e76c3c 0%, #e9573f 10%, #d44e34 50%, #bc422b 100%); }
+.window-controls button:hover {
+    filter: brightness(1.1);
+}
+
+.minimize-btn {
+    background: var(--xp-blue);
+}
+
+.close-btn {
+    background: linear-gradient(to bottom, #e76c3c 0%, #e9573f 10%, #d44e34 50%, #bc422b 100%);
+}
 
 .window-content {
     padding: 10px;
@@ -159,7 +194,9 @@ body {
     display: none !important;
 }
 
-/* --- 5. EFFETS NARRATIFS & HORREUR --- */
+/* ============================================
+   5. EFFETS NARRATIFS & HORREUR
+   ============================================ */
 
 /* Censure Léo */
 .censored {
@@ -184,7 +221,7 @@ body {
 }
 
 @keyframes clock-vibrate {
-    0% { transform: translate(0,0); }
+    0% { transform: translate(0, 0); }
     50% { transform: translate(-1px, 1px); }
     100% { transform: translate(1px, -1px); }
 }
@@ -193,7 +230,7 @@ body {
 .corruptible-photo {
     width: 100%;
     filter: grayscale(1) contrast(1.2);
-    transition: 0.3s;
+    transition: filter 0.3s, opacity 0.15s, transform 0.3s;
     cursor: crosshair;
 }
 
@@ -211,18 +248,27 @@ body {
 }
 
 @keyframes fadeOutGhost {
-    to { opacity: 0; transform: scale(0.98); }
+    to {
+        opacity: 0;
+        transform: scale(0.98);
+    }
 }
 
-/* --- 6. BARRE DES TÂCHES --- */
+/* ============================================
+   6. BARRE DES TÂCHES
+   ============================================ */
+
 .taskbar {
     position: fixed;
-    bottom: 0; left: 0; width: 100%; height: 30px;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30px;
     background: linear-gradient(to bottom, #245edb 0%, #3f8cf3 9%, #245edb 18%, #245edb 92%, #1941a5 100%);
     z-index: 1000;
     display: flex;
     align-items: center;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.3);
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .start-button {
@@ -236,7 +282,11 @@ body {
     border-bottom-right-radius: 10px;
     border: none;
     cursor: pointer;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.start-button:hover {
+    filter: brightness(1.1);
 }
 
 .task-item {
@@ -250,17 +300,26 @@ body {
     border-radius: 2px;
 }
 
+.task-item:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
 #clock {
     margin-left: auto;
     color: white;
     padding-right: 15px;
     font-size: 12px;
+    cursor: pointer;
 }
 
-/* --- 7. TERMINAL & BSOD --- */
+/* ============================================
+   7. TERMINAL & BSOD
+   ============================================ */
+
 #terminal {
     position: fixed;
-    bottom: 40px; right: 20px;
+    bottom: 40px;
+    right: 20px;
     width: 250px;
     height: 150px;
     background: rgba(0, 0, 0, 0.85);
@@ -288,31 +347,70 @@ body {
     flex-grow: 1;
 }
 
-.log-entry.warning { color: #ff0000; font-weight: bold; }
+.log-entry {
+    margin-bottom: 2px;
+}
+
+.log-entry.warning {
+    color: #ff0000;
+    font-weight: bold;
+}
 
 .bsod {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: #0000aa; color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #0000aa;
+    color: white;
     font-family: 'Lucida Console', monospace;
-    padding: 50px; z-index: 10000;
+    padding: 50px;
+    z-index: 10000;
     display: none;
 }
 
-/* --- 8. ÉVOLUTION DU GLITCH --- */
-body.glitch-level-1 { filter: contrast(1.2) saturate(0.8); }
-body.glitch-level-2 { animation: shake 0.2s infinite; }
+.bsod h1 {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.bsod p {
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+/* ============================================
+   8. ÉVOLUTION DU GLITCH
+   ============================================ */
+
+body.glitch-level-1 {
+    filter: contrast(1.2) saturate(0.8);
+}
+
+body.glitch-level-2 {
+    animation: shake 0.2s infinite;
+}
+
+body.glitch-level-3 {
+    filter: hue-rotate(180deg) invert(0.2);
+    animation: shake 0.1s infinite;
+}
 
 @keyframes shake {
-    0% { transform: translate(0,0); }
+    0% { transform: translate(0, 0); }
     25% { transform: translate(-2px, 2px); }
     50% { transform: translate(2px, -2px); }
     75% { transform: translate(-2px, -2px); }
     100% { transform: translate(2px, 2px); }
 }
 
-/*--- 9. Effet Lecteur de Photos --- */
+/* ============================================
+   9. LECTEUR DE PHOTOS
+   ============================================ */
+
 .photo-viewer-container {
-    background: #7b7b7b; /* Couleur de fond du lecteur original */
+    background: #7b7b7b;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -334,7 +432,6 @@ body.glitch-level-2 { animation: shake 0.2s infinite; }
     max-width: 95%;
     max-height: 95%;
     object-fit: contain;
-    transition: opacity 0.15s ease, transform 0.3s ease;
 }
 
 .photo-toolbar {
@@ -361,8 +458,60 @@ body.glitch-level-2 { animation: shake 0.2s infinite; }
     border: 1px solid #999;
 }
 
+.photo-toolbar button img {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
 .toolbar-separator {
     width: 1px;
     height: 24px;
     background: #a0a0a0;
+}
+
+/* ============================================
+   10. RESPONSIVE & ACCESSIBILITÉ
+   ============================================ */
+
+@media (max-width: 768px) {
+    .desktop-icons {
+        grid-template-columns: repeat(auto-fill, 70px);
+    }
+    
+    .window {
+        max-width: 90vw;
+    }
+    
+    #terminal {
+        width: 200px;
+        height: 120px;
+    }
+}
+
+/* Liens */
+a {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+a:hover {
+    color: darkblue;
+}
+
+/* Tables */
+table {
+    border-collapse: collapse;
+}
+
+table th,
+table td {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+}
+
+table th {
+    font-weight: bold;
+    text-align: left;
 }
