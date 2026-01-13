@@ -79,7 +79,7 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fill, 85px);
     grid-template-rows: repeat(auto-fill, 90px);
-    grid-gap: 15px;
+    grid-gap: 25px;
     z-index: 5;
     position: relative;
 }
