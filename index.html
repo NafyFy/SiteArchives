@@ -53,7 +53,49 @@
                 <img src="https://win98icons.alexmeub.com/icons/png/gears-2.png" alt="Project">
                 <span>LE_PROJET.exe</span>
             </div>
+            <div class="icon" onclick="openWindow('win-minesweeper')">
+            <img src="https://win98icons.alexmeub.com/icons/png/game_mine_sweeper-0.png" alt="Mines">
+            <span>SecteurB_Démineur.exe</span>
         </div>
+    </div> <div class="window" id="win-minesweeper" style="display:none; width:300px; top:20%; left:30%;">
+        <div class="window-header">
+            <span>Démineur de Conscience - Archive 2004</span>
+            <div class="window-controls">
+                <button class="minimize-btn" onclick="minimizeWin(this)">_</button>
+                <button class="close-btn" onclick="closeWin(this)">X</button>
+            </div>
+        </div>
+        <div class="window-content" style="background:#bdbdbd; padding:10px; text-align:center;">
+            <div id="mine-status" style="background:black; color:#00ff41; font-family: 'Courier New'; padding:5px; margin-bottom:10px; border:2px inset #eee; font-size:10px;">
+                SEGMENTS CORROMPUS : 0/8
+            </div>
+            <div id="mine-grid" style="display:grid; grid-template-columns: repeat(8, 28px); gap:1px; background:#808080; border:2px inset #eee; margin:auto; width:fit-content;"></div>
+            <p style="font-size:9px; color:#555; margin-top:10px;">Propriété d'Aeterna Digital - Archive 1998-2004</p>
+        </div>
+    </div>
+</div>
+        </div>
+        <div class="window" id="win-confidential" style="display:none; width:400px; top:15%; left:25%; border: 3px solid gold;">
+    <div class="window-header" style="background: linear-gradient(to bottom, #bf953f, #fcf6ba, #b38728);">
+        <span style="color: black; text-shadow: none;">⚠️ ACCÈS PRIORITÉ ALPHA - VANE ⚠️</span>
+        <div class="window-controls">
+            <button class="close-btn" onclick="closeWin(this)">X</button>
+        </div>
+    </div>
+    <div class="window-content" style="background: #000; color: #fff; font-family: 'Courier New', monospace;">
+        <div style="text-align: center; border-bottom: 1px solid #444; padding-bottom: 10px; margin-bottom: 10px;">
+            <img src="https://picsum.photos/id/64/150/150?grayscale" style="border: 1px solid #fff; filter: contrast(1.5);">
+            <p style="font-size: 14px; font-weight: bold; margin-top: 5px;">DIRECTEUR VANE [STATUT : NUMÉRISÉ]</p>
+        </div>
+        <p style="font-size: 11px; line-height: 1.4;">
+            "Le Projet Écho est un succès. Nous n'avons plus besoin de corps. 
+            Le Secteur B est devenu notre nouveau monde. <br><br>
+            Si vous lisez ceci, vous faites déjà partie de l'archive. <br>
+            Merci de nous avoir aidés à stabiliser la boucle."
+        </p>
+        <p style="color: red; font-size: 10px; text-align: center;">--- FIN DE LA MÉMOIRE ---</p>
+    </div>
+</div>
 
         <!-- Fenêtre README -->
         <div class="window" id="win-readme" style="top:50px; left:50px; display:block; width:350px;">

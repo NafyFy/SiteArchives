@@ -515,3 +515,36 @@ table th {
     font-weight: bold;
     text-align: left;
 }
+
+
+.mine-cell {
+    width: 25px;
+    height: 25px;
+    background: #bdbdbd;
+    border: 2px outset #eee;
+    font-size: 12px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.mine-cell.revealed {
+    border: 1px solid #7b7b7b;
+    background: #c0c0c0;
+}
+
+.mine-cell.bomb {
+    background: #ff4444;
+    animation: clock-vibrate 0.1s infinite;
+}
+.mine-cell.flagged {
+    background-color: #f1c40f; /* Couleur or pour marquer le fragment */
+    position: relative;
+}
+
+.mine-cell.flagged::after {
+    content: "🚩"; /* Symbole du drapeau */
+    font-size: 14px;
+}

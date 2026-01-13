@@ -17,18 +17,15 @@ Ce n'est pas un OS, c'est une boucle de mémoire.
 ATTENTION : Le système semble réagir à votre présence.
 Si vous entendez des fréquences anormales, ne débranchez rien.`;
 
-const messagesGlitch = [
-    "Ceci n'est pas un souvenir.", 
-    "ERREUR 404", 
-    "Regarde derrière toi.", 
-    "L'archive a faim.", 
-    "Subject_07_Detected"
-];
-
-const journalEntries = [
-    "12/03/2004 : J'ai trouvé une porte dans le serveur.",
-    "15/03/2004 : Le site me répond. Avec mes propres souvenirs.",
-    "AIDEZ-MOI. ILS NE VEULENT PAS QUE JE SORTE."
+const aeternaSecrets = [
+    "NOTE : Directeur Vane a ordonné le scellement des portes à 03:40.",
+    "ARCHIVE : 12/05/2004 - Les serveurs consomment plus d'oxygène que d'électricité.",
+    "PUB : Aeterna Digital - 'Votre âme, nos serveurs. L'éternité est un disque dur.'",
+    "LOG : Le bruit de drone dans les couloirs est un cri compressé à 44.1kHz.",
+    "ALERTE : Tentative de reconnexion externe détectée depuis Laval (2026).",
+    "FAIT DIVERS : L'ingénieur de maintenance n'était pas seul. Où sont les autres ?",
+    "TECH : Le processeur Echo chauffe à 37.2°C. Température humaine nominale.",
+    "FINAL : Ce n'est pas un ordinateur. C'est un cercueil numérique."
 ];
 
 const photoData = [
@@ -45,6 +42,12 @@ let keyBuffer = "";
 let clockClicks = 0;
 let currentPhotoIndex = 0;
 
+// Variables Démineur
+let safeCellsToReveal = 0;
+let revealedSafeCells = 0;
+let flagsPlacedOnMines = 0;
+let totalMines = 8;
+
 const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
 let konamiPosition = 0;
 
@@ -55,7 +58,6 @@ let konamiPosition = 0;
 function addLog(msg) {
     const cont = document.getElementById('terminal-content');
     if (!cont) return;
-    
     const d = document.createElement('div');
     d.className = 'log-entry' + (msg.includes('ALERTE') || msg.includes('ERREUR') ? ' warning' : '');
     d.innerText = "> " + msg;
@@ -66,26 +68,17 @@ function addLog(msg) {
 function updateClock() {
     const clock = document.getElementById('clock');
     if (!clock || clock.classList.contains('glitch-clock')) return;
-    
     const now = new Date();
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    clock.innerText = `${hours}:${minutes}`;
+    clock.innerText = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
 }
-
-// ============================================
-// 3. L'HORLOGE HANTÉE (Indice 03:42)
-// ============================================
 
 function handleGhostClock() {
     const clock = document.getElementById('clock');
-    
     setInterval(() => {
         if (Math.random() > 0.8) {
             clock.innerText = "03:42";
             clock.classList.add('glitch-clock');
             addLog("ALERTE : Désynchronisation temporelle.");
-            
             setTimeout(() => {
                 clock.classList.remove('glitch-clock');
                 updateClock();
@@ -95,77 +88,51 @@ function handleGhostClock() {
 }
 
 // ============================================
-// 4. GESTION DES FENÊTRES
+// 3. GESTION DES FENÊTRES (Drag & Drop)
 // ============================================
 
 function dragElement(elmnt) {
     let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
     const header = elmnt.querySelector('.window-header');
     
-    (header || elmnt).onmousedown = dragMouseDown;
-    
-    function dragMouseDown(e) {
+    (header || elmnt).onmousedown = (e) => {
         if (e.target.tagName === 'BUTTON') return;
         e.preventDefault();
-        
-        pos3 = e.clientX;
-        pos4 = e.clientY;
+        pos3 = e.clientX; pos4 = e.clientY;
         elmnt.style.zIndex = 1000;
-        
-        document.onmouseup = closeDragElement;
-        document.onmousemove = elementDrag;
-    }
-    
-    function elementDrag(e) {
-        e.preventDefault();
-        createGhostTrail(elmnt);
-        
-        pos1 = pos3 - e.clientX;
-        pos2 = pos4 - e.clientY;
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        
-        // Effet saccadé (Lag processeur 2004)
-        setTimeout(() => {
-            elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-            elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-        }, Math.random() * 30);
-    }
-    
-    function closeDragElement() {
-        document.onmouseup = null;
-        document.onmousemove = null;
-    }
+        document.onmouseup = () => { document.onmousemove = null; };
+        document.onmousemove = (e) => {
+            createGhostTrail(elmnt);
+            pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY;
+            pos3 = e.clientX; pos4 = e.clientY;
+            setTimeout(() => {
+                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+            }, Math.random() * 30);
+        };
+    };
 }
 
 function createGhostTrail(original) {
     const ghost = original.cloneNode(true);
     ghost.classList.add('ghost-window');
     ghost.removeAttribute('id');
-    ghost.style.left = original.style.left;
-    ghost.style.top = original.style.top;
     document.body.appendChild(ghost);
-    
     setTimeout(() => ghost.remove(), 500);
 }
 
 function openWindow(id) {
     const win = document.getElementById(id);
     if (!win) return;
-    
     win.style.display = 'flex';
     win.classList.remove('minimized');
     addLog("Secteur ouvert : " + id);
-    
-    // Cas spécial pour les photos
-    if (id === 'win-family') {
-        updatePhotoUI();
-    }
+    if (id === 'win-family') updatePhotoUI();
+    if (id === 'win-minesweeper') initMinesweeper();
 }
 
 function closeWin(btn) {
     const win = btn.closest('.window');
-    
     if (glitchLevel >= 2 && win.id !== 'win-readme') {
         win.style.top = Math.random() * 70 + "vh";
         win.style.left = Math.random() * 70 + "vw";
@@ -178,38 +145,29 @@ function closeWin(btn) {
 function minimizeWin(btn) {
     const win = btn.closest('.window');
     win.classList.add('minimized');
-    
-    if (win.id === 'win-leo') {
-        document.getElementById('task-leo').style.display = 'block';
-    }
+    if (win.id === 'win-leo') document.getElementById('task-leo').style.display = 'block';
 }
 
 function restoreLeo() {
     const win = document.getElementById('win-leo');
-    if (!win) return;
-    
-    win.classList.remove('minimized');
-    win.style.display = 'flex';
-    document.getElementById('task-leo').style.display = 'none';
+    if (win) {
+        win.classList.remove('minimized');
+        win.style.display = 'flex';
+        document.getElementById('task-leo').style.display = 'none';
+    }
 }
 
 // ============================================
-// 5. PROGRESSION DU GLITCH ET BSOD
+// 4. PROGRESSION DU GLITCH ET BSOD
 // ============================================
 
 function triggerGlitch() {
     glitchLevel++;
     document.body.classList.add(`glitch-level-${glitchLevel}`);
     addLog("CRITIQUE : Instabilité niveau " + glitchLevel);
-    
-    if (glitchLevel === 1) {
-        document.getElementById('icon-project').style.display = 'flex';
-    }
-    
+    if (glitchLevel === 1) document.getElementById('icon-project').style.display = 'flex';
     if (glitchLevel === 3) {
         document.body.style.filter = "invert(1) hue-rotate(180deg)";
-        addLog("ERREUR FATALE : Inversion de la matrice mémorielle.");
-        
         setTimeout(() => {
             document.getElementById('bsod-screen').style.display = 'block';
             document.body.style.filter = "none"; 
@@ -218,86 +176,56 @@ function triggerGlitch() {
 }
 
 // ============================================
-// 6. MESSAGES CENSURÉS DE LÉO
+// 5. MESSAGES CENSURÉS DE LÉO
 // ============================================
 
 function receiveCensoredMessage(text) {
     addLog("ALERTE : Flux de données entrant.");
     openWindow('win-leo');
-    
     const chat = document.querySelector('#win-leo .window-content');
     const p = document.createElement('p');
     p.innerHTML = `<b>Léo :</b> <span class="censored">${text}</span>`;
     chat.appendChild(p);
-    
     setTimeout(() => {
         const span = p.querySelector('.censored');
-        if (span) {
-            span.innerText = "[DONNÉES CENSURÉES PAR LE NOYAU]";
-        }
+        if (span) span.innerText = "[DONNÉES CENSURÉES PAR LE NOYAU]";
         addLog("ERREUR : Protocole de sécurité 0x07 activé.");
     }, 2500);
 }
 
 // ============================================
-// 7. GESTION DES PHOTOS
+// 6. GESTION DES PHOTOS ET PAINT
 // ============================================
 
 function updatePhotoUI() {
     const photo = photoData[currentPhotoIndex];
     const imgElement = document.getElementById('main-photo');
-    
     if (!imgElement) return;
-    
-    // Effet de fondu au changement
     imgElement.style.opacity = 0;
-    
     setTimeout(() => {
         imgElement.src = photo.url;
         document.getElementById('photo-title').innerText = "Aperçu - " + photo.title;
         document.getElementById('photo-caption').innerText = photo.caption;
         imgElement.style.opacity = 1;
-        
-        // Si glitchLevel est haut, on déforme l'image
-        if (glitchLevel >= 2) {
-            imgElement.style.filter = `hue-rotate(${Math.random() * 360}deg) invert(1)`;
-        }
+        if (glitchLevel >= 2) imgElement.style.filter = `hue-rotate(${Math.random() * 360}deg) invert(1)`;
     }, 150);
 }
 
 function changePhoto(direction) {
-    currentPhotoIndex += direction;
-    
-    if (currentPhotoIndex >= photoData.length) {
-        currentPhotoIndex = 0;
-    }
-    if (currentPhotoIndex < 0) {
-        currentPhotoIndex = photoData.length - 1;
-    }
-    
+    currentPhotoIndex = (currentPhotoIndex + direction + photoData.length) % photoData.length;
     updatePhotoUI();
-    addLog("Accès fichier : " + photoData[currentPhotoIndex].title);
 }
 
 function zoomPhoto() {
     const img = document.getElementById('main-photo');
-    if (!img) return;
-    
-    img.style.transform = img.style.transform === "scale(1.5)" ? "scale(1)" : "scale(1.5)";
-    addLog("Zoom numérique... Analyse des pixels en cours.");
+    if (img) img.style.transform = img.style.transform === "scale(1.5)" ? "scale(1)" : "scale(1.5)";
 }
-
-// ============================================
-// 8. EASTER EGGS - PAINT
-// ============================================
 
 function distortPaint() {
     const img = document.getElementById('paint-img');
     if (!img) return;
-    
     img.style.filter = "invert(1) contrast(5)";
-    addLog("ALERTE : Corruption graphique détectée dans le fichier BMP.");
-    
+    addLog("ALERTE : Corruption graphique détectée.");
     setTimeout(() => {
         img.src = "https://picsum.photos/id/101/300/200?grayscale";
         img.style.filter = "grayscale(1) contrast(1.2)";
@@ -305,67 +233,121 @@ function distortPaint() {
 }
 
 // ============================================
-// 9. EASTER EGGS ET SECRETS
+// 7. LOGIQUE DU DÉMINEUR (UNIFIÉE)
+// ============================================
+
+function initMinesweeper() {
+    const gridElement = document.getElementById('mine-grid');
+    const status = document.getElementById('mine-status');
+    if (!gridElement || !status) return;
+
+    gridElement.innerHTML = '';
+    status.innerText = "SEGMENTS CORROMPUS : 0/8";
+    revealedSafeCells = 0;
+    flagsPlacedOnMines = 0;
+    safeCellsToReveal = (8 * 8) - totalMines; 
+
+    const size = 8;
+    const totalCells = size * size;
+    let minePositions = [];
+    let gridData = Array(totalCells).fill(0);
+
+    while (minePositions.length < totalMines) {
+        let pos = Math.floor(Math.random() * totalCells);
+        if (!minePositions.includes(pos)) {
+            minePositions.push(pos);
+            gridData[pos] = "M"; 
+        }
+    }
+
+    for (let i = 0; i < totalCells; i++) {
+        if (gridData[i] === "M") continue;
+        let count = 0;
+        let row = Math.floor(i / size), col = i % size;
+        for (let dr = -1; dr <= 1; dr++) {
+            for (let dc = -1; dc <= 1; dc++) {
+                let nr = row + dr, nc = col + dc;
+                if (nr >= 0 && nr < size && nc >= 0 && nc < size) {
+                    if (gridData[nr * size + nc] === "M") count++;
+                }
+            }
+        }
+        gridData[i] = count;
+    }
+
+    gridData.forEach((value, index) => {
+        const cell = document.createElement('div');
+        cell.className = 'mine-cell';
+        
+        cell.onclick = function() {
+            if (this.classList.contains('revealed') || this.classList.contains('flagged')) return;
+            this.classList.add('revealed');
+            if (value === "M") {
+                this.classList.add('bomb'); this.innerText = "X";
+                addLog("FRAGMENT DÉCRYPTÉ : " + aeternaSecrets[Math.floor(Math.random() * aeternaSecrets.length)]);
+                triggerGlitch();
+            } else {
+                this.innerText = value > 0 ? value : "";
+                revealedSafeCells++;
+                checkWinCondition();
+            }
+        };
+
+        cell.oncontextmenu = function(e) {
+            e.preventDefault();
+            if (this.classList.contains('revealed')) return;
+            this.classList.toggle('flagged');
+            if (this.classList.contains('flagged')) {
+                if (value === "M") flagsPlacedOnMines++;
+                addLog("MARQUAGE : Fragment identifié.");
+            } else {
+                if (value === "M") flagsPlacedOnMines--;
+            }
+            checkWinCondition();
+        };
+        gridElement.appendChild(cell);
+    });
+}
+
+function checkWinCondition() {
+    if (revealedSafeCells === safeCellsToReveal || flagsPlacedOnMines === totalMines) {
+        triggerVictory();
+    }
+}
+
+function triggerVictory() {
+    addLog("SYNCHRONISATION TERMINÉE.");
+    document.body.style.filter = "sepia(1) contrast(1.5)";
+    setTimeout(() => openWindow('win-confidential'), 1500);
+}
+
+// ============================================
+// 8. INITIALISATION ET SECRETS
 // ============================================
 
 window.addEventListener('keydown', (e) => {
-    // 1. Mot clé WALID
     keyBuffer += e.key.toUpperCase();
     if (keyBuffer.includes("WALID")) {
         document.body.style.filter = "invert(1) hue-rotate(180deg)";
-        addLog("MODE ADMIN : RÉALITÉ INVERSÉE");
+        addLog("MODE ADMIN ACTIVÉ");
         keyBuffer = "";
     }
-    
-    // 2. Konami Code
     if (e.key === konamiCode[konamiPosition]) {
         konamiPosition++;
-        if (konamiPosition === konamiCode.length) {
-            addLog("TRICHE DÉTECTÉE.");
-            document.getElementById('bsod-screen').style.display = 'block';
-            konamiPosition = 0;
-        }
-    } else {
-        konamiPosition = 0;
-    }
-    
-    // 3. F12
-    if (e.key === 'F12') {
-        addLog("FOUINEUR DÉTECTÉ.");
-        triggerGlitch();
-    }
+        if (konamiPosition === konamiCode.length) { triggerGlitch(); konamiPosition = 0; }
+    } else { konamiPosition = 0; }
+    if (e.key === 'F12') triggerGlitch();
 });
 
-// Secret horloge (5 clics)
-document.getElementById('clock')?.addEventListener('click', () => {
-    clockClicks++;
-    if (clockClicks === 5) {
-        openWindow('win-student-card');
-        clockClicks = 0;
-    }
+window.addEventListener('DOMContentLoaded', () => {
+    const readme = document.getElementById('readme-text');
+    if (readme) readme.innerText = loreReadme;
+    document.querySelectorAll('.window').forEach(win => dragElement(win));
+    updateClock();
+    setInterval(updateClock, 1000);
+    handleGhostClock();
+    addLog("Système initialisé. Archive MA_04 prête.");
 });
-
-// ============================================
-// 10. CLIPPY MALÉFIQUE
-// ============================================
-
-setTimeout(() => {
-    const clippy = document.getElementById('evil-clippy');
-    if (clippy) {
-        clippy.style.display = 'block';
-        clippy.onclick = () => {
-            document.getElementById('clippy-speech').style.display = 'block';
-            triggerGlitch();
-            setTimeout(() => {
-                clippy.style.display = 'none';
-            }, 4000);
-        };
-    }
-}, 150000); // 2.5 minutes
-
-// ============================================
-// 11. AUDIO DRONE
-// ============================================
 
 window.addEventListener('click', () => {
     if (!audioStarted) {
@@ -373,75 +355,12 @@ window.addEventListener('click', () => {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-            
-            osc.type = 'sine'; // 'brown' n'existe pas
-            osc.frequency.setValueAtTime(45, audioCtx.currentTime);
+            osc.type = 'sine'; osc.frequency.setValueAtTime(45, audioCtx.currentTime);
             gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
-            
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            
-            audioStarted = true;
-        } catch (error) {
-            console.error("Erreur audio:", error);
-        }
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); audioStarted = true;
+        } catch(e) { console.error("Audio blocké."); }
     }
 });
 
-// ============================================
-// 12. CRÉATION DYNAMIQUE DE LA FENÊTRE MSN
-// ============================================
-
-setTimeout(() => {
-    if (!document.getElementById('win-leo')) {
-        const chatWin = document.createElement('div');
-        chatWin.className = 'window';
-        chatWin.id = 'win-leo';
-        chatWin.style.bottom = "40px";
-        chatWin.style.right = "20px";
-        chatWin.style.width = "250px";
-        chatWin.style.display = 'none';
-        
-        chatWin.innerHTML = `
-            <div class="window-header">
-                <span>MSN Messenger - Léo</span>
-                <div class="window-controls">
-                    <button class="minimize-btn" onclick="minimizeWin(this)">_</button>
-                    <button class="close-btn" onclick="closeWin(this)">X</button>
-                </div>
-            </div>
-            <div class="window-content" style="background:white; color:black; height:120px; font-size:11px;"></div>
-        `;
-        
-        document.body.appendChild(chatWin);
-        dragElement(chatWin);
-    }
-    
-    receiveCensoredMessage("Est-ce que tu peux m'entendre ? Il fait sombre dans l'entrepôt.");
-}, 60000); // 1 minute
-
-// ============================================
-// 13. INITIALISATION
-// ============================================
-
-window.addEventListener('DOMContentLoaded', () => {
-    // Charger le texte README
-    const readme = document.getElementById('readme-text');
-    if (readme) {
-        readme.innerText = loreReadme;
-    }
-    
-    // Rendre toutes les fenêtres draggables
-    document.querySelectorAll('.window').forEach(win => {
-        dragElement(win);
-    });
-    
-    // Démarrer l'horloge
-    updateClock();
-    setInterval(updateClock, 1000);
-    handleGhostClock();
-    
-    // Log de démarrage
-    addLog("Système initialisé. Archive MA_04 prête.");
-});
+setTimeout(() => receiveCensoredMessage("Est-ce que tu peux m'entendre ? Il fait sombre."), 60000);
