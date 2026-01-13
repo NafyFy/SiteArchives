@@ -207,8 +207,12 @@ function triggerGlitch() {
     }
     
     if (glitchLevel === 3) {
+        document.body.style.filter = "invert(1) hue-rotate(180deg)";
+        addLog("ERREUR FATALE : Inversion de la matrice mémorielle.");
+        
         setTimeout(() => {
             document.getElementById('bsod-screen').style.display = 'block';
+            document.body.style.filter = "none"; 
         }, 3000);
     }
 }
