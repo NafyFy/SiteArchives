@@ -45,7 +45,6 @@ let currentPhotoIndex = 0;
 // Variables Démineur
 let safeCellsToReveal = 0;
 let revealedSafeCells = 0;
-let flagsPlacedOnMines = 0;
 let totalMines = 8;
 
 const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
@@ -88,7 +87,7 @@ function handleGhostClock() {
 }
 
 // ============================================
-// 3. GESTION DES FENÊTRES (Drag & Drop)
+// 3. GESTION DES FENÊTRES
 // ============================================
 
 function dragElement(elmnt) {
@@ -158,7 +157,7 @@ function restoreLeo() {
 }
 
 // ============================================
-// 4. PROGRESSION DU GLITCH ET BSOD
+// 4. PROGRESSION DU GLITCH
 // ============================================
 
 function triggerGlitch() {
@@ -176,21 +175,45 @@ function triggerGlitch() {
 }
 
 // ============================================
-// 5. MESSAGES CENSURÉS DE LÉO
+// 5. MESSAGES CENSURÉS DE LÉO 
 // ============================================
 
 function receiveCensoredMessage(text) {
     addLog("ALERTE : Flux de données entrant.");
+    
+    if (!document.getElementById('win-leo')) {
+        const chatWin = document.createElement('div');
+        chatWin.className = 'window'; 
+        chatWin.id = 'win-leo';
+        
+        chatWin.style.top = "150px";   
+        chatWin.style.left = "50px";
+        chatWin.style.width = "250px";
+        chatWin.style.zIndex = "9999";
+        
+        chatWin.innerHTML = `
+            <div class="window-header"><span>MSN Messenger - Léo</span>
+            <div class="window-controls"><button onclick="minimizeWin(this)">_</button><button onclick="closeWin(this)">X</button></div></div>
+            <div class="window-content" style="background:white; color:black; height:120px; font-size:11px; overflow-y:auto;"></div>`;
+        
+        document.body.appendChild(chatWin);
+        dragElement(chatWin);
+    }
+    
     openWindow('win-leo');
+    
     const chat = document.querySelector('#win-leo .window-content');
     const p = document.createElement('p');
     p.innerHTML = `<b>Léo :</b> <span class="censored">${text}</span>`;
     chat.appendChild(p);
+    
+    chat.scrollTop = chat.scrollHeight;
+    
     setTimeout(() => {
         const span = p.querySelector('.censored');
         if (span) span.innerText = "[DONNÉES CENSURÉES PAR LE NOYAU]";
         addLog("ERREUR : Protocole de sécurité 0x07 activé.");
-    }, 2500);
+    }, 5000);
 }
 
 // ============================================
@@ -233,7 +256,7 @@ function distortPaint() {
 }
 
 // ============================================
-// 7. LOGIQUE DU DÉMINEUR (UNIFIÉE)
+// 7. LOGIQUE DU DÉMINEUR (FLAG = DÉCOUVERTE)
 // ============================================
 
 function initMinesweeper() {
@@ -242,9 +265,12 @@ function initMinesweeper() {
     if (!gridElement || !status) return;
 
     gridElement.innerHTML = '';
+    
+    // Variables locales pour le suivi de la partie en cours
+    let fragmentsFound = 0; 
     status.innerText = "SEGMENTS CORROMPUS : 0/8";
+    
     revealedSafeCells = 0;
-    flagsPlacedOnMines = 0;
     safeCellsToReveal = (8 * 8) - totalMines; 
 
     const size = 8;
@@ -252,6 +278,7 @@ function initMinesweeper() {
     let minePositions = [];
     let gridData = Array(totalCells).fill(0);
 
+    // Placement des mines
     while (minePositions.length < totalMines) {
         let pos = Math.floor(Math.random() * totalCells);
         if (!minePositions.includes(pos)) {
@@ -260,6 +287,7 @@ function initMinesweeper() {
         }
     }
 
+    // Calcul des chiffres
     for (let i = 0; i < totalCells; i++) {
         if (gridData[i] === "M") continue;
         let count = 0;
@@ -275,55 +303,88 @@ function initMinesweeper() {
         gridData[i] = count;
     }
 
+    // Génération visuelle
     gridData.forEach((value, index) => {
         const cell = document.createElement('div');
         cell.className = 'mine-cell';
         
+        // --- CLIC GAUCHE (Révélation classique) ---
         cell.onclick = function() {
             if (this.classList.contains('revealed') || this.classList.contains('flagged')) return;
+            
             this.classList.add('revealed');
+
             if (value === "M") {
-                this.classList.add('bomb'); this.innerText = "X";
-                addLog("FRAGMENT DÉCRYPTÉ : " + aeternaSecrets[Math.floor(Math.random() * aeternaSecrets.length)]);
+                // Si on clique gauche sur une bombe, elle explose (Lore : Fragment instable)
+                this.classList.add('bomb'); 
+                this.innerText = "!";
+                addLog("ERREUR : Fragment instable percuté.");
                 triggerGlitch();
+                // Note : On ne compte PAS cela comme un fragment "trouvé/sécurisé"
             } else {
                 this.innerText = value > 0 ? value : "";
+                if (value === 1) this.style.color = "blue";
+                if (value === 2) this.style.color = "green";
+                if (value === 3) this.style.color = "red";
+                
                 revealedSafeCells++;
-                checkWinCondition();
+                if (revealedSafeCells === safeCellsToReveal) triggerVictory();
             }
         };
 
+        // --- CLIC DROIT  ---
         cell.oncontextmenu = function(e) {
             e.preventDefault();
             if (this.classList.contains('revealed')) return;
+
+            // Basculer l'état du drapeau
             this.classList.toggle('flagged');
-            if (this.classList.contains('flagged')) {
-                if (value === "M") flagsPlacedOnMines++;
-                addLog("MARQUAGE : Fragment identifié.");
+            const isFlagged = this.classList.contains('flagged');
+            
+            if (isFlagged) {
+                if (value === "M") {
+                    // C'EST UNE BOMBE : On incrémente le compteur et on révèle le secret
+                    fragmentsFound++;
+                    status.innerText = `SEGMENTS CORROMPUS : ${fragmentsFound}/8`;
+                    
+                    // On affiche le secret correspondant au numéro du fragment
+                    // (fragmentsFound - 1) permet de prendre le secret index 0, puis 1, etc.
+                    const secretMsg = aeternaSecrets[(fragmentsFound - 1) % aeternaSecrets.length];
+                    addLog(`FRAGMENT SÉCURISÉ [${fragmentsFound}/8] : ${secretMsg}`);
+                 
+
+                    // VICTOIRE ?
+                    if (fragmentsFound === 8) {
+                        triggerVictory();
+                    }
+                } else {
+                    // Ce n'était pas une bombe
+                    addLog("MARQUAGE : Zone suspecte marquée (Pas de signal).");
+                }
             } else {
-                if (value === "M") flagsPlacedOnMines--;
+                // L'utilisateur retire un drapeau
+                if (value === "M") {
+                    // On décrémente si on retire le drapeau d'une vraie bombe
+                    fragmentsFound--;
+                    status.innerText = `SEGMENTS CORROMPUS : ${fragmentsFound}/8`;
+                    addLog("ANNULATION : Marquage retiré.");
+                }
             }
-            checkWinCondition();
         };
         gridElement.appendChild(cell);
     });
 }
 
-function checkWinCondition() {
-    if (revealedSafeCells === safeCellsToReveal || flagsPlacedOnMines === totalMines) {
-        triggerVictory();
-    }
-}
-
 function triggerVictory() {
-    addLog("SYNCHRONISATION TERMINÉE.");
+    addLog("SYNCHRONISATION TERMINÉE : Toutes les données sont sécurisées.");
     document.body.style.filter = "sepia(1) contrast(1.5)";
     setTimeout(() => openWindow('win-confidential'), 1500);
+    // On retire le filtre un peu après pour la lisibilité
     setTimeout(() => { document.body.style.filter = "none"; }, 5500);
 }
 
 // ============================================
-// 8. INITIALISATION ET SECRETS
+// 8. INITIALISATION ET EVENTS
 // ============================================
 
 window.addEventListener('keydown', (e) => {
