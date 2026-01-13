@@ -3,7 +3,7 @@
  */
 
 // ============================================
-// 1. DONNÉES ET LORE
+// 1. DONNÉES ET LORE (VARIABLES CONSTANTES)
 // ============================================
 
 const loreReadme = `NOTE DE RÉCUPÉRATION - 10/01/2026
@@ -35,7 +35,24 @@ const photoData = [
     { url: "https://picsum.photos/id/237/800/600?grayscale&blur=5", title: "fragment_07.jpg", caption: "ERREUR : Image corrompue. Subject_07 detected." }
 ];
 
-// Variables globales
+const spamMessages = [
+    "POURQUOI ES-TU ENCORE LÀ ?",
+    "JE TE VOIS.",
+    "RENDS-MOI MON VISAGE.",
+    "ERREUR SYSTEME : AME NON TROUVÉE.",
+    "AETERNA NE TE LAISSERA PAS PARTIR.",
+    "03:42",
+    "TU AS OUBLIÉ DE RESPIRER.",
+    "A L'AIDE !",
+    "TON TEMPS EST ÉCOULÉ.",
+    "mcvxjz9@!$#%&*()",
+    "0642486161"
+];
+
+// ============================================
+// 2. VARIABLES D'ÉTAT
+// ============================================
+
 let glitchLevel = 0;
 let audioStarted = false;
 let keyBuffer = "";
@@ -47,11 +64,12 @@ let safeCellsToReveal = 0;
 let revealedSafeCells = 0;
 let totalMines = 8;
 
+// Cheat Code
 const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
 let konamiPosition = 0;
 
 // ============================================
-// 2. SYSTÈME DE LOGS ET HORLOGE
+// 3. SYSTÈME DE LOGS ET HORLOGE
 // ============================================
 
 function addLog(msg) {
@@ -87,7 +105,7 @@ function handleGhostClock() {
 }
 
 // ============================================
-// 3. GESTION DES FENÊTRES
+// 4. GESTION DES FENÊTRES (UI)
 // ============================================
 
 function dragElement(elmnt) {
@@ -157,7 +175,7 @@ function restoreLeo() {
 }
 
 // ============================================
-// 4. PROGRESSION DU GLITCH
+// 5. LOGIQUE DE GLITCH ET D'HORREUR
 // ============================================
 
 function triggerGlitch() {
@@ -174,10 +192,6 @@ function triggerGlitch() {
     }
 }
 
-// ============================================
-// 5. MESSAGES CENSURÉS DE LÉO 
-// ============================================
-
 function receiveCensoredMessage(text) {
     addLog("ALERTE : Flux de données entrant.");
     
@@ -185,7 +199,7 @@ function receiveCensoredMessage(text) {
         const chatWin = document.createElement('div');
         chatWin.className = 'window'; 
         chatWin.id = 'win-leo';
-        
+        // Positionnement forcé en haut à gauche
         chatWin.style.top = "150px";   
         chatWin.style.left = "50px";
         chatWin.style.width = "250px";
@@ -206,7 +220,6 @@ function receiveCensoredMessage(text) {
     const p = document.createElement('p');
     p.innerHTML = `<b>Léo :</b> <span class="censored">${text}</span>`;
     chat.appendChild(p);
-    
     chat.scrollTop = chat.scrollHeight;
     
     setTimeout(() => {
@@ -217,7 +230,7 @@ function receiveCensoredMessage(text) {
 }
 
 // ============================================
-// 6. GESTION DES PHOTOS ET PAINT
+// 6. APPLICATIONS (PHOTOS, PAINT, SPAM)
 // ============================================
 
 function updatePhotoUI() {
@@ -255,8 +268,66 @@ function distortPaint() {
     }, 500);
 }
 
+function openSpamAttack() {
+    addLog("ALERTE CRITIQUE : Exécution de code malveillant.");
+    triggerGlitch();
+    
+    let count = 0;
+    const maxSpam = 15;
+    
+    const interval = setInterval(() => {
+        createSpamWindow();
+        count++;
+        if (count >= maxSpam) {
+            clearInterval(interval);
+            setTimeout(() => {
+                addLog("SYSTÈME : Menace contenue... pour l'instant.");
+            }, 2000);
+        }
+    }, 300);
+}
+
+function createSpamWindow() {
+    const spam = document.createElement('div');
+    spam.className = 'spam-popup';
+    
+    const x = Math.random() * (window.innerWidth - 250);
+    const y = Math.random() * (window.innerHeight - 200);
+    
+    spam.style.left = x + 'px';
+    spam.style.top = y + 'px';
+    
+    const msg = spamMessages[Math.floor(Math.random() * spamMessages.length)];
+    
+    spam.innerHTML = `
+        <div class="spam-header">
+            <span>ALERTE</span>
+            <button onclick="this.closest('.spam-popup').remove()" style="background:none; border:1px solid white; color:white; cursor:pointer;">X</button>
+        </div>
+        <div class="spam-content">
+            <p>${msg}</p>
+            <button onclick="this.closest('.spam-popup').remove()" style="margin-top:10px;">OK</button>
+        </div>
+    `;
+    
+    document.body.appendChild(spam);
+    
+    // Son d'erreur synthétisé
+    try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+    } catch(e) {}
+}
+
 // ============================================
-// 7. LOGIQUE DU DÉMINEUR (FLAG = DÉCOUVERTE)
+// 7. JEU : DÉMINEUR (LOGIQUE COMPLÈTE)
 // ============================================
 
 function initMinesweeper() {
@@ -278,7 +349,7 @@ function initMinesweeper() {
     let minePositions = [];
     let gridData = Array(totalCells).fill(0);
 
-    // Placement des mines
+    // A. Placement des mines
     while (minePositions.length < totalMines) {
         let pos = Math.floor(Math.random() * totalCells);
         if (!minePositions.includes(pos)) {
@@ -287,7 +358,7 @@ function initMinesweeper() {
         }
     }
 
-    // Calcul des chiffres
+    // B. Calcul des chiffres adjacents
     for (let i = 0; i < totalCells; i++) {
         if (gridData[i] === "M") continue;
         let count = 0;
@@ -303,24 +374,22 @@ function initMinesweeper() {
         gridData[i] = count;
     }
 
-    // Génération visuelle
+    // C. Génération de la grille visuelle
     gridData.forEach((value, index) => {
         const cell = document.createElement('div');
         cell.className = 'mine-cell';
         
-        // --- CLIC GAUCHE (Révélation classique) ---
+        // --- CLIC GAUCHE (Révéler) ---
         cell.onclick = function() {
             if (this.classList.contains('revealed') || this.classList.contains('flagged')) return;
             
             this.classList.add('revealed');
 
             if (value === "M") {
-                // Si on clique gauche sur une bombe, elle explose (Lore : Fragment instable)
                 this.classList.add('bomb'); 
                 this.innerText = "!";
                 addLog("ERREUR : Fragment instable percuté.");
                 triggerGlitch();
-                // Note : On ne compte PAS cela comme un fragment "trouvé/sécurisé"
             } else {
                 this.innerText = value > 0 ? value : "";
                 if (value === 1) this.style.color = "blue";
@@ -332,39 +401,30 @@ function initMinesweeper() {
             }
         };
 
-        // --- CLIC DROIT  ---
+        // --- CLIC DROIT (Drapeau = Découverte) ---
         cell.oncontextmenu = function(e) {
             e.preventDefault();
             if (this.classList.contains('revealed')) return;
 
-            // Basculer l'état du drapeau
             this.classList.toggle('flagged');
             const isFlagged = this.classList.contains('flagged');
             
             if (isFlagged) {
                 if (value === "M") {
-                    // C'EST UNE BOMBE : On incrémente le compteur et on révèle le secret
                     fragmentsFound++;
                     status.innerText = `SEGMENTS CORROMPUS : ${fragmentsFound}/8`;
                     
-                    // On affiche le secret correspondant au numéro du fragment
-                    // (fragmentsFound - 1) permet de prendre le secret index 0, puis 1, etc.
                     const secretMsg = aeternaSecrets[(fragmentsFound - 1) % aeternaSecrets.length];
                     addLog(`FRAGMENT SÉCURISÉ [${fragmentsFound}/8] : ${secretMsg}`);
                  
-
-                    // VICTOIRE ?
                     if (fragmentsFound === 8) {
                         triggerVictory();
                     }
                 } else {
-                    // Ce n'était pas une bombe
                     addLog("MARQUAGE : Zone suspecte marquée (Pas de signal).");
                 }
             } else {
-                // L'utilisateur retire un drapeau
                 if (value === "M") {
-                    // On décrémente si on retire le drapeau d'une vraie bombe
                     fragmentsFound--;
                     status.innerText = `SEGMENTS CORROMPUS : ${fragmentsFound}/8`;
                     addLog("ANNULATION : Marquage retiré.");
@@ -379,12 +439,11 @@ function triggerVictory() {
     addLog("SYNCHRONISATION TERMINÉE : Toutes les données sont sécurisées.");
     document.body.style.filter = "sepia(1) contrast(1.5)";
     setTimeout(() => openWindow('win-confidential'), 1500);
-    // On retire le filtre un peu après pour la lisibilité
     setTimeout(() => { document.body.style.filter = "none"; }, 5500);
 }
 
 // ============================================
-// 8. INITIALISATION ET EVENTS
+// 8. INITIALISATION ET ÉVÉNEMENTS
 // ============================================
 
 window.addEventListener('keydown', (e) => {
@@ -401,16 +460,6 @@ window.addEventListener('keydown', (e) => {
     if (e.key === 'F12') triggerGlitch();
 });
 
-window.addEventListener('DOMContentLoaded', () => {
-    const readme = document.getElementById('readme-text');
-    if (readme) readme.innerText = loreReadme;
-    document.querySelectorAll('.window').forEach(win => dragElement(win));
-    updateClock();
-    setInterval(updateClock, 1000);
-    handleGhostClock();
-    addLog("Système initialisé. Archive MA_04 prête.");
-});
-
 window.addEventListener('click', () => {
     if (!audioStarted) {
         try {
@@ -425,4 +474,15 @@ window.addEventListener('click', () => {
     }
 });
 
-setTimeout(() => receiveCensoredMessage("Est-ce que tu peux m'entendre ? Il fait sombre."), 60000);
+window.addEventListener('DOMContentLoaded', () => {
+    const readme = document.getElementById('readme-text');
+    if (readme) readme.innerText = loreReadme;
+    document.querySelectorAll('.window').forEach(win => dragElement(win));
+    updateClock();
+    setInterval(updateClock, 1000);
+    handleGhostClock();
+    addLog("Système initialisé. Archive MA_04 prête.");
+    
+    // Déclenchement du chat Léo après 1 minute
+    setTimeout(() => receiveCensoredMessage("Est-ce que tu peux m'entendre ? Il fait sombre."), 60000);
+});

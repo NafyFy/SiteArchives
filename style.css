@@ -189,7 +189,6 @@ body {
     overflow-y: auto;
 }
 
-/* État réduit */
 .window.minimized {
     display: none !important;
 }
@@ -238,7 +237,7 @@ body {
     filter: invert(1) contrast(2) hue-rotate(90deg);
 }
 
-/* Ghost Windows (Effet de traînée) */
+/* Ghost Windows */
 .ghost-window {
     pointer-events: none !important;
     z-index: 40 !important;
@@ -384,18 +383,9 @@ body {
    8. ÉVOLUTION DU GLITCH
    ============================================ */
 
-body.glitch-level-1 {
-    filter: contrast(1.2) saturate(0.8);
-}
-
-body.glitch-level-2 {
-    animation: shake 0.2s infinite;
-}
-
-body.glitch-level-3 {
-    filter: hue-rotate(180deg) invert(0.2);
-    animation: shake 0.1s infinite;
-}
+body.glitch-level-1 { filter: contrast(1.2) saturate(0.8); }
+body.glitch-level-2 { animation: shake 0.2s infinite; }
+body.glitch-level-3 { filter: hue-rotate(180deg) invert(0.2); animation: shake 0.1s infinite; }
 
 @keyframes shake {
     0% { transform: translate(0, 0); }
@@ -471,51 +461,8 @@ body.glitch-level-3 {
 }
 
 /* ============================================
-   10. RESPONSIVE & ACCESSIBILITÉ
+   10. STYLE DU JEU DÉMINEUR
    ============================================ */
-
-@media (max-width: 768px) {
-    .desktop-icons {
-        grid-template-columns: repeat(auto-fill, 70px);
-    }
-    
-    .window {
-        max-width: 90vw;
-    }
-    
-    #terminal {
-        width: 200px;
-        height: 120px;
-    }
-}
-
-/* Liens */
-a {
-    color: blue;
-    text-decoration: underline;
-    cursor: pointer;
-}
-
-a:hover {
-    color: darkblue;
-}
-
-/* Tables */
-table {
-    border-collapse: collapse;
-}
-
-table th,
-table td {
-    padding: 5px 10px;
-    border: 1px solid #ccc;
-}
-
-table th {
-    font-weight: bold;
-    text-align: left;
-}
-
 
 .mine-cell {
     width: 25px;
@@ -539,12 +486,85 @@ table th {
     background: #ff4444;
     animation: clock-vibrate 0.1s infinite;
 }
+
 .mine-cell.flagged {
-    background-color: #f1c40f; /* Couleur or pour marquer le fragment */
+    background-color: #f1c40f;
     position: relative;
 }
 
 .mine-cell.flagged::after {
-    content: "🚩"; /* Symbole du drapeau */
+    content: "🚩";
     font-size: 14px;
+}
+
+/* ============================================
+   11. POP-UPS DE SPAM (HORREUR)
+   ============================================ */
+
+.spam-popup {
+    position: absolute;
+    width: 200px;
+    background: #ece9d8;
+    border: 2px solid #0053e1;
+    box-shadow: 10px 10px 0px rgba(0,0,0,0.2);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    animation: popIn 0.2s ease-out;
+}
+
+.spam-header {
+    background: linear-gradient(to right, #e74c3c, #c0392b);
+    color: white;
+    padding: 3px 5px;
+    font-size: 11px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+}
+
+.spam-content {
+    padding: 15px;
+    text-align: center;
+    font-size: 12px;
+    color: black;
+}
+
+@keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* ============================================
+   12. ÉLÉMENTS GLOBAUX & RESPONSIVE
+   ============================================ */
+
+a {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+a:hover {
+    color: darkblue;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+}
+
+table th {
+    font-weight: bold;
+    text-align: left;
+}
+
+@media (max-width: 768px) {
+    .desktop-icons { grid-template-columns: repeat(auto-fill, 70px); }
+    .window { max-width: 90vw; }
+    #terminal { width: 200px; height: 120px; }
 }
