@@ -319,6 +319,7 @@ function triggerVictory() {
     addLog("SYNCHRONISATION TERMINÉE.");
     document.body.style.filter = "sepia(1) contrast(1.5)";
     setTimeout(() => openWindow('win-confidential'), 1500);
+    setTimeout(() => { document.body.style.filter = "none"; }, 5500);
 }
 
 // ============================================
